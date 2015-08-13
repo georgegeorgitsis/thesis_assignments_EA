@@ -1,0 +1,6 @@
+RewriteEngine on
+RewriteBase /dmegeorge/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond $1 !^(index\.php|assets|favicon.gif)
+RewriteRule ^(.*)$ index.php/$1 [L]
