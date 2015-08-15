@@ -42,6 +42,9 @@
                 <li>
                     <a href="<?= base_url('assignment/get_data'); ?>">Thesis Assignment</a>
                 </li>
+                <li>
+                    <a href="<?= base_url('login/logout');?>">Logout</a>
+                </li>
             </ul>
         </nav>
     </div>
@@ -112,7 +115,7 @@
                     <label for="priority">Σειρά προτίμησης</label>
                 </div>
                 <div class="col-lg-6">
-                    0<input type="range" name="priority" id="priority" value="50" min="0" max="100">100
+                    0<input type="range" name="priority" id="priority" value="0" min="0" max="100">100
                 </div>
             </div>
             <div class="form-group">
@@ -120,7 +123,7 @@
                     <label for="population_number">Αριθμός πληθυσμού</label>
                 </div>
                 <div class="col-lg-6">
-                    <input type="text" name="population_number" id="population_number" required="required">
+                    <input type="text" name="population_number" id="population_number" required="required" value="100">
                 </div>
             </div>
 

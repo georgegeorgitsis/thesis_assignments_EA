@@ -1,10 +1,17 @@
 <style>
     .form-group {
         overflow: hidden;
-    }    
+    }
+    .results-tr {
+        width: 100%;
+    }
     .results-tr td {
         border-bottom: 1px solid silver;
         margin: 10px 0px;
+        width: 33%;
+    }
+    #population {
+        width: 100%;
     }
 </style>
 
@@ -43,6 +50,9 @@
                 <li>
                     <a href="<?= base_url('assignment/get_data'); ?>">Thesis Assignment</a>
                 </li>
+                <li>
+                    <a href="<?= base_url('login/logout'); ?>">Logout</a>
+                </li>
             </ul>
         </nav>
     </div>
@@ -75,21 +85,29 @@
         <div class="col-md-12">
             <h1>Thesis Assignment Report</h1>
 
-            <h3>Αποτελέσματα:</h3>
+            <h3>Results:</h3>
             <table id="population">
                 <tr>
                 </tr>
-                <?php foreach ($population as $individual): ?>
+                <?php
+                $i = count($solution) - 1;
+
+                for ($k = 0; $k < $i; $k++) {
+                    ?>
                     <tr class="results-tr">
-                        <?php foreach ($individual as $gene_key => $gene_value): ?>
-                            <td>
-                                <?php foreach ($gene_value as $key => $val): ?>
-                                    <?php echo $key . ' : ' . $val . "<br/>"; ?>
-                                <?php endforeach; ?>
-                            </td>
-                        <?php endforeach; ?>
+                        <td>
+                            <?php echo $solution[$k]['student_id']; ?>
+                        </td>
+                        <td>
+                            <?php echo $solution[$k]['thesis_id']; ?>
+                        </td>
+                        <td>
+                            <?php echo $solution[$k]['priority']; ?>
+                        </td>
                     </tr>
-                <?php endforeach; ?>
+                    <?php
+                }
+                ?>
             </table>
             <hr>
         </div>

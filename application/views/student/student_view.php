@@ -14,8 +14,10 @@
                 <li>
                     <a href="<?= base_url('student/thesis_declaration');?>">Declare Thesis</a>
                 </li>
-
-
+                <li>
+                    <a href="<?= base_url('login/logout');?>">Logout</a>
+                </li>
+                
             </ul>
         </nav>
     </div>

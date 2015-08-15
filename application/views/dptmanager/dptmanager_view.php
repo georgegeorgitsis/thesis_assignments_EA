@@ -32,6 +32,9 @@
                 <li>
                     <a href="<?= base_url('assignment/get_data');?>">Thesis Assignment</a>
                 </li>
+                <li>
+                    <a href="<?= base_url('login/logout');?>">Logout</a>
+                </li>
             </ul>
         </nav>
     </div>

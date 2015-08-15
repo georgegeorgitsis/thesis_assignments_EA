@@ -17,7 +17,9 @@
                 <li>
                     <a href="<?= base_url('teacher/courses_per_thesis_management');?>">Manage Courses Needed per Thesis</a>
                 </li>
-
+                <li>
+                    <a href="<?= base_url('login/logout');?>">Logout</a>
+                </li>
             </ul>
         </nav>
     </div>
