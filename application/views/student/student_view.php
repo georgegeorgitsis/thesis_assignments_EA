@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="<?= base_url();?>" class="navbar-brand">DME Student</a>
+            <a class="navbar-brand">ΜΔΕ Student</a>
         </div>
         <nav class="collapse navbar-collapse" role="navigation">
             <ul class="nav navbar-nav">

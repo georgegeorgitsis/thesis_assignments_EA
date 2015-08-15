@@ -33,7 +33,7 @@ class Assignment extends MY_Controller {
 
         if ($this->form_validation->run() == FALSE)
         {
-            $this->load->template('assignment_get_data_view', $this->view_data);
+            $this->load->template('dptmanager/assignment_get_data_view', $this->view_data);
         }
         else
         {
@@ -99,9 +99,9 @@ class Assignment extends MY_Controller {
         $population = $this->helper->roullete_selection($population, $population_number, $sum_chances);
 
         //var_dump($population);
-        var_dump($varitites);
+        //var_dump($varitites);
         $this->view_data['population'] = $population;
-        $this->load->template('assignment_view', $this->view_data);
+        $this->load->template('dptmanager/assignment_view', $this->view_data);
 
     }
 

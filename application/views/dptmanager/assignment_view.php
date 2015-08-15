@@ -1,3 +1,13 @@
+<style>
+    .form-group {
+        overflow: hidden;
+    }    
+    .results-tr td {
+        border-bottom: 1px solid silver;
+        margin: 10px 0px;
+    }
+</style>
+
 <header class="navbar navbar-default navbar-static-top" role="banner">
     <div class="container">
         <div class="navbar-header">
@@ -7,7 +17,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="<?= base_url(); ?>" class="navbar-brand">DME Dpt Manager</a>
+            <a class="navbar-brand">ΜΔΕ Dpt Manager</a>
         </div>
         <nav class="collapse navbar-collapse" role="navigation">
             <ul class="nav navbar-nav">
@@ -65,19 +75,16 @@
         <div class="col-md-12">
             <h1>Thesis Assignment Report</h1>
 
-            <h3>Results:</h3>
-            <?php // var_dump($this->input->post());?>
+            <h3>Αποτελέσματα:</h3>
             <table id="population">
                 <tr>
                 </tr>
-
-                <?php // var_dump($population);?>
                 <?php foreach ($population as $individual): ?>
-                    <tr>
+                    <tr class="results-tr">
                         <?php foreach ($individual as $gene_key => $gene_value): ?>
                             <td>
                                 <?php foreach ($gene_value as $key => $val): ?>
-                                    <?php echo $key . ' : ' . $val; ?>
+                                    <?php echo $key . ' : ' . $val . "<br/>"; ?>
                                 <?php endforeach; ?>
                             </td>
                         <?php endforeach; ?>

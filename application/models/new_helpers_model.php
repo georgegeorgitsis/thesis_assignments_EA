@@ -384,7 +384,6 @@ class new_helpers_model extends CI_Model
 
         for ($i = 0; $i < $population_count; $i++) {
             $random_number = rand(0, $sum_chances);
-            //echo "<br/> Random number: " . $random_number . "<br/>";
 
             $ch_before = 0;
             $ch_after = 0;
@@ -394,11 +393,9 @@ class new_helpers_model extends CI_Model
                 $ch_after += $individual['fitness']['chances'];
 
                 if (($random_number >= $ch_before) && $random_number <= $ch_after) {
-                    //echo "<br/>!!!!! found: " . $individual_cell . "<br/>";
                     $new_population_for_selection[$i] = $population[$individual_cell];
                 }
 
-                //echo $individual_cell . " min limit: " . $ch_before . " - max limit: " . $ch_after . "<br/>";
                 $individual_cell++;
             }
 
