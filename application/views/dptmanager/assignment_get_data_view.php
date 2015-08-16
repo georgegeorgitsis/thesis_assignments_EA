@@ -115,7 +115,7 @@
                     <label for="priority">Σειρά προτίμησης</label>
                 </div>
                 <div class="col-lg-6">
-                    0<input type="range" name="priority" id="priority" value="0" min="0" max="100">100
+                    0<input type="range" name="priority" id="priority" value="100" min="0" max="100">100
                 </div>
             </div>
             <div class="form-group">
@@ -123,7 +123,7 @@
                     <label for="population_number">Αριθμός πληθυσμού</label>
                 </div>
                 <div class="col-lg-6">
-                    <input type="text" name="population_number" id="population_number" required="required" value="100">
+                    <input type="text" name="population_number" id="population_number" required="required" value="1000">
                 </div>
             </div>
 

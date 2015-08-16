@@ -16,7 +16,6 @@ class Assignment extends MY_Controller {
     public function __construct() {
         parent::__construct();
         $this->user_data = $this->flexi_auth->get_user_by_identity()->result();
-        //var_dump($this->user_data[0]);
     }
 
     public function get_data() {
@@ -80,50 +79,44 @@ class Assignment extends MY_Controller {
         //ftiakse to 1o population me random genes. to 1o individual to exoume apo prin
         $population = $this->helper->create_first_population($population_number, $single_values, $acceptable_genes);
 
-        $population = $this->helper->get_individual_sum_fitness($population);
+        $population = $this->helper->get_population_fitness($population, $acceptable_genes);
 
         //dinw se kathe individual fitness
         //$population = $this->helper->get_fitness_per_individual($population, $acceptable_genes);
         //merge to 1o population mazi me to 1o individual
         //$population = array_merge($population, $individuals);
 
-        $population_fitness_before = 0;
-        $population_fitness_next = 1;
         $acceptable_genes_number = 0;
-
+        $collisions_number = 1;
         $turns = 0;
-        while ($acceptable_genes_number != $students_to_get_thesis_number) {
-            //echo $turns . "<br/>";
-            //pairnw to sum apo fitness gia na ipologisw ta chances pou exei to kathe individual
+        $total_fitness_before = 0;
+        $total_fitness_after = 1;
+
+        while (($collisions_number != 0)) {
+
+            if ($turns != 0) {
+                $total_fitness_before = $total_fitness_after;
+            }
             $sum_chances = $this->helper->get_sum_single_chances($population);
 
-            //to neo population meta apo roullete
             $population = $this->helper->roullete_selection($population, $population_number, $sum_chances, $acceptable_genes);
 
-            //dinw se kathe individual fitness
-            //$population = $this->helper->get_fitness_per_individual($population, $acceptable_genes);
-            $population = $this->helper->get_individual_sum_fitness($population);
-
-            $population_fitness_before = $population_fitness_next;
-            $population_fitness_next = $this->helper->get_population_fitness($population);
+            $population = $this->helper->get_population_fitness($population, $acceptable_genes);
 
             $best_individual = $this->helper->best_individual($population);
-            $acceptable_genes_number = $best_individual['fitness']['acceptable_genes'];
+            //$acceptable_genes_number = $best_individual['fitness']['acceptable_genes'];
             $collisions_number = $best_individual['fitness']['collisions'];
+            $total_fitness_after = $best_individual['fitness']['total_fitness'];
 
             $turns++;
-
-            if ($turns == 500) {
-                break;
-            }
         }
-
 
         $this->view_data['solution'] = $best_individual;
         $this->load->template('dptmanager/assignment_view', $this->view_data);
+        
+        //var_dump($best_individual);
 
-
-        echo "acceptable: " . $acceptable_genes_number;
+        echo "acceptable: " . $this->helper->check_acceptable_genes_per_individual($best_individual, $acceptable_genes);
         echo "<br/>";
         echo "collisions: " . $collisions_number;
     }
