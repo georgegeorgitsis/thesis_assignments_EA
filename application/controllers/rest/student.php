@@ -32,10 +32,10 @@ class student extends REST_Controller {
 
     public function get_student_get() {
         $api_key = $this->rest->key;
-        $teacher['am'] = $this->get('am');
+        $student['username'] = $this->get('username');
 
-        $result = $this->student->get_single_student($student['am'], $api_key);
-        $this->response($result);
+        $result = $this->student->get_single_student($student['username'], $api_key);
+        return $this->response($result);
     }
 
     public function get_students_get() {

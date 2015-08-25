@@ -28,12 +28,12 @@ class student_model extends CI_Model {
         return TRUE;
     }
 
-    public function get_single_student($am, $api_key) {
-        $qry = $this->db->select('student.name, student.surname, student.am')
-                ->from('student')
-                ->where('am', $am)
-                ->join('department', 'department.id=teacher.department')
-                ->join('keys', 'keys.id=department.key', 'keys.key=' . $api_key)
+    public function get_single_student($username, $api_key) {
+        $qry = $this->db->select('user_accounts.uacc_username as username, user_accounts.uacc_email as email, user_accounts.bathmos_proodou')
+                ->from('user_accounts')
+                ->where('uacc_username', $username)
+                ->join('departments', 'departments.id=user_accounts.department_id')
+                ->join('keys', 'keys.id=departments.key', 'keys.key=' . $api_key)
                 ->get();
 
         $result = $qry->row_array();
@@ -42,21 +42,15 @@ class student_model extends CI_Model {
     }
 
     public function get_students($api_key) {
-        $qry = $this->db->select('student.name, student.surname, student.am')
-                ->from('student')
-                ->join('department', 'department.id=student.department')
-                ->join('keys', 'keys.id=department.key', 'keys.key=' . $api_key)
+        $qry = $this->db->select('user_accounts.uacc_username as username, user_accounts.uacc_email as email, user_accounts.bathmos_proodou')
+                ->from('user_accounts')
+                ->join('departments', 'departments.id=user_accounts.department_id')
+                ->join('keys', 'keys.id=departments.key', 'keys.key=' . $api_key)
                 ->get();
 
         $result = $qry->result_array();
-        $i = 0;
-        foreach ($result as $each_row) {
-            $res[$i]['name'] = $each_row['name'];
-            $res[$i]['surname'] = $each_row['surname'];
-            $res[$i]['am'] = $each_row['am'];
-            $i++;
-        }
-        return $res;
+
+        return $result;
     }
 
     public function add_grade($grade) {
