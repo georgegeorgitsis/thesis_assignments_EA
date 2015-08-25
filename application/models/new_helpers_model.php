@@ -47,7 +47,8 @@ class new_helpers_model extends CI_Model {
             'mo_assigned_courses' => intval($post['mo_assigned_courses']) / 100,
             'date_added' => intval($post['date_added']) / 100,
             'bathmos_proodou' => intval($post['bathmos_proodou']) / 100,
-            'priority' => intval($post['priority']) / 100
+            'priority' => intval($post['priority']) / 100,
+            'terminate' => intval($post['mo_sxolis']) + intval($post['mo_assigned_courses']) + intval($post['date_added']) + intval($post['bathmos_proodou']) + intval($post['priority'])
         );
 
         return $varitites;

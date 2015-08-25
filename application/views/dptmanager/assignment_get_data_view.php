@@ -83,7 +83,7 @@
                     <label for="mo_sxolis">Μ.Ο. Σχολής</label>
                 </div>
                 <div class="col-lg-6">
-                    0<input type="range" name="mo_sxolis" id="mo_sxolis" value="50" min="0" max="100">100
+                    0<input type="range" name="mo_sxolis" id="mo_sxolis" value="100" min="0" max="100">100
                 </div>
             </div>
             <div class="form-group">
@@ -91,7 +91,7 @@
                     <label for="mo_assigned_courses">Μ.Ο. Προαπαιτούμενων</label>
                 </div>
                 <div class="col-lg-6">
-                    0<input type="range" name="mo_assigned_courses" id="mo_assigned_courses" value="50" min="0" max="100">100
+                    0<input type="range" name="mo_assigned_courses" id="mo_assigned_courses" value="100" min="0" max="100">100
                 </div>
             </div>
             <div class="form-group">
@@ -99,7 +99,7 @@
                     <label for="date_added">Ημερομηνία εισαγωγής</label>
                 </div>
                 <div class="col-lg-6">
-                    0<input type="range" name="date_added" id="date_added" value="50" min="0" max="100">100
+                    0<input type="range" name="date_added" id="date_added" value="100" min="0" max="100">100
                 </div>
             </div>
             <div class="form-group">
@@ -107,7 +107,7 @@
                     <label for="bathmos_proodou">Βαθμός προόδου</label>
                 </div>
                 <div class="col-lg-6">
-                    0<input type="range" name="bathmos_proodou" id="bathmos_proodou" value="50" min="0" max="100">100
+                    0<input type="range" name="bathmos_proodou" id="bathmos_proodou" value="100" min="0" max="100">100
                 </div>
             </div>
             <div class="form-group">

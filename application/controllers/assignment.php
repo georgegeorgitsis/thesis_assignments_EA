@@ -51,7 +51,6 @@ class Assignment extends MY_Controller {
         $declarations = $this->declarations->get_all_declarations($dpt_id);
         $declarations = array_values($declarations);
 
-
         //vale sto array ton declarations, vathmous, mesous orous, etos eisagogis, bathmo proodou ktlp
         $filled_declarations_before_fs = $this->helper->fill_declarations_with_data_before_fs($declarations);
         $filled_declarations_before_fs = array_values($filled_declarations_before_fs);
@@ -64,6 +63,8 @@ class Assignment extends MY_Controller {
 
         //fere tis varitites
         $varitites = $this->helper->get_varitites($this->input->post());
+
+        $terminate = floor($varitites['terminate'] / 200);
 
         //fere sto array ton declarations, to assesment, mazi me ola ta fs
         $filled_declarations_with_fs = $this->helper->fill_declarations_with_fs($filled_declarations_before_fs, $all_values, $varitites);
@@ -83,17 +84,15 @@ class Assignment extends MY_Controller {
 
         $collisions_number = 1;
         $turns = 0;
-        $total_fitness_before = 10;
-        $total_fitness_after = 10;
+        $total_fitness = 0;
 
-        while ($collisions_number != 0) {
-
-            $total_fitness_before = $total_fitness_after;
+        while ($collisions_number != 0 || $total_fitness <= 0) {
 
             $sum_chances = $this->helper->get_sum_single_chances($population);
 
-            if ($turns == 20) {
+            if ($turns % 20 == 0) {
                 $population = $this->helper->create_first_population($population_number, $single_values, $acceptable_genes);
+                $population = $this->helper->get_population_fitness($population, $acceptable_genes);
             }
 
             $population = $this->helper->roullete_selection($population, $population_number, $sum_chances, $acceptable_genes);
@@ -103,7 +102,8 @@ class Assignment extends MY_Controller {
             $best_individual = $this->helper->best_individual($population);
             $collisions_number = $this->helper->check_collisions_per_individual($best_individual);
 
-            $total_fitness_after = $best_individual['fitness']['total_fitness'];
+            $total_fitness = $best_individual['fitness']['total_fitness'];
+
 
             $turns++;
         }
@@ -113,7 +113,7 @@ class Assignment extends MY_Controller {
         $general_results['acceptable_genes'] = $this->helper->check_acceptable_genes_per_individual($best_individual, $acceptable_genes);
         $general_results['collisions'] = $collisions_number;
         $general_results['turns'] = $turns;
-        $general_results['total_fitness'] = $total_fitness_after;
+        $general_results['total_fitness'] = $total_fitness;
 
         $this->view_data['solution'] = $solution;
         $this->view_data['general_results'] = $general_results;
