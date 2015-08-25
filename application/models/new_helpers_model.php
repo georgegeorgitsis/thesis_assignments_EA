@@ -28,6 +28,10 @@ class new_helpers_model extends CI_Model {
     }
 
     public function feature_scaling($min, $max, $value, $rev = false) {
+        if ($max == $min) {
+            return 1;
+        }
+
         if (!$rev) {
             $x = ($value - $min) / ($max - $min);
         } else {
@@ -122,7 +126,7 @@ class new_helpers_model extends CI_Model {
             $filled_declarations[$i]['date_added_fs_epi_varititas'] = $filled_declarations[$i]['date_added_fs'] * $varitites['date_added'];
             $filled_declarations[$i]['bathmos_proodou_fs_epi_varititas'] = $filled_declarations[$i]['bathmos_proodou_fs'] * $varitites['bathmos_proodou'];
             $filled_declarations[$i]['mo_sxolis_fs_epi_varititas'] = $filled_declarations[$i]['mo_sxolis_fs'] * $varitites['mo_sxolis'];
-            $filled_declarations[$i]['mo_assigned_courses_fs_epi_varititas'] = $filled_declarations[$i]['mo_assigned_courses_fs'] * $varitites['mo_assigned_courses'] ;
+            $filled_declarations[$i]['mo_assigned_courses_fs_epi_varititas'] = $filled_declarations[$i]['mo_assigned_courses_fs'] * $varitites['mo_assigned_courses'];
 
             $filled_declarations[$i]['assessment'] = ($filled_declarations[$i]['priority_fs_epi_varititas'] + $filled_declarations[$i]['date_added_fs_epi_varititas'] + $filled_declarations[$i]['bathmos_proodou_fs_epi_varititas'] + $filled_declarations[$i]['mo_sxolis_fs_epi_varititas'] + $filled_declarations[$i]['mo_assigned_courses_fs_epi_varititas']);
 
@@ -384,9 +388,16 @@ class new_helpers_model extends CI_Model {
     public function crossover($population, $acceptable_genes) {
         $population_count = count($population);
         $genes_count = count($population[0]) - 1;
+        //mutation
+        for ($m = 0; $m < 1000; $m++) {
+            $mutation[$m] = $m;
+        }
 
         for ($i = 0; $i < $population_count; $i++) {
+            $mutation_random = $mutation[array_rand($mutation)];
+
             $given_thesis = array();
+
 
             if ($i % 2 != 0) {
                 for ($j = 0; $j < count($population[$i]) - 1; $j++) {
@@ -403,6 +414,20 @@ class new_helpers_model extends CI_Model {
                                 $good_child[$j] = $population[$i - 1][$j];
                                 $bad_child[$j] = $population[$i][$j];
                             }
+                        }
+                    }
+
+                    if ($mutation_random == 0) {
+                        echo "mutation";
+                        for ($g = 0; $g < count($acceptable_genes); $g++) {
+                            $random_thesis[$g] = $acceptable_genes[$g]['thesis_id'];
+
+                            $mutation_thesis_1 = $random_thesis[array_rand($random_thesis)];
+                            $mutation_thesis_2 = $random_thesis[array_rand($random_thesis)];
+
+                            $temp_child = $good_child[$j];
+                            $good_child[$j]['thesis_id'] = $bad_child[$j]['thesis_id'];
+                            $bad_child[$j]['thesis_id'] = $temp_child['thesis_id'];
                         }
                     }
 
@@ -431,56 +456,4 @@ class new_helpers_model extends CI_Model {
         return $best_individual;
     }
 
-    /*
-      public function crossover($selected_individuals, $sum_chances, $acceptable_genes) {
-      $genes_count = count($selected_individuals[0]) - 1;
-      $i = 0;
-
-      foreach ($selected_individuals as $individual) {
-      if ($i % 2 != 0) {
-      $individual_1 = $selected_individuals[$i - 1];
-      $individual_2 = $selected_individuals[$i];
-
-      for ($k = 0; $k < $genes_count; $k++) {
-      if ($individual_1[$k]['assessment'] > $individual_2[$k]['assessment']) {
-      $good_individual[$k] = $individual_1[$k];
-      $bad_individual[$k] = $individual_2[$k];
-      } else {
-      $good_individual[$k] = $individual_2[$k];
-      $bad_individual[$k] = $individual_1[$k];
-      }
-      }
-
-      $new_population[$i - 1] = $good_individual;
-      $new_population[$i] = $bad_individual;
-      }
-      $i++;
-      }
-
-      return $new_population;
-      }
-     * 
-     */
 }
-
-/*
-  public function create_first_individual($filled_declarations_with_fs) {
-  $individual = array();
-
-  $i = 0;
-  foreach ($filled_declarations_with_fs as $declaration) {
-  if ($declaration['priority'] == 1) {
-
-  $individual[$i]['student_id'] = $declaration['student_id'];
-  $individual[$i]['thesis_id'] = $declaration['thesis_id'];
-  $individual[$i]['priority'] = $declaration['priority'];
-  $individual[$i]['assessment'] = $declaration['assessment'];
-
-  $i++;
-  }
-  }
-
-  return $individual;
-  }
- * 
- */

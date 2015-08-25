@@ -27,9 +27,10 @@ class Assignment extends MY_Controller {
         $this->form_validation->set_rules('bathmos_proodou', 'bathmos_proodou', 'trim');
         $this->form_validation->set_rules('priority', 'priority', 'trim');
 
+        $this->load->template('dptmanager/assignment_get_data_view', $this->view_data);
 
         if ($this->form_validation->run() == FALSE) {
-            $this->load->template('dptmanager/assignment_get_data_view', $this->view_data);
+            
         } else {
             $this->get_declarations($this->user_data[0]->department_id);
         }
@@ -49,6 +50,7 @@ class Assignment extends MY_Controller {
         //fere ola ta declarations apo tin vasi
         $declarations = $this->declarations->get_all_declarations($dpt_id);
         $declarations = array_values($declarations);
+
 
         //vale sto array ton declarations, vathmous, mesous orous, etos eisagogis, bathmo proodou ktlp
         $filled_declarations_before_fs = $this->helper->fill_declarations_with_data_before_fs($declarations);
@@ -74,51 +76,49 @@ class Assignment extends MY_Controller {
 
         sort($single_values['student_id']);
 
-        //ftiakse mou to prwto individual me tis dilwseis me priority 1
-        //$population[0] = $this->helper->create_first_individual($filled_declarations_with_fs);
         //ftiakse to 1o population me random genes. to 1o individual to exoume apo prin
         $population = $this->helper->create_first_population($population_number, $single_values, $acceptable_genes);
 
         $population = $this->helper->get_population_fitness($population, $acceptable_genes);
 
-        //dinw se kathe individual fitness
-        //$population = $this->helper->get_fitness_per_individual($population, $acceptable_genes);
-        //merge to 1o population mazi me to 1o individual
-        //$population = array_merge($population, $individuals);
-
         $acceptable_genes_number = 0;
         $collisions_number = 1;
         $turns = 0;
-        $total_fitness_before = 0;
-        $total_fitness_after = 1;
+        $total_fitness_before = 10;
+        $total_fitness_after = 10;
 
-        while (($collisions_number != 0)) {
+        while ($collisions_number != 0) {
 
-            if ($turns != 0) {
-                $total_fitness_before = $total_fitness_after;
-            }
+            $total_fitness_before = $total_fitness_after;
+
             $sum_chances = $this->helper->get_sum_single_chances($population);
+
+            if ($turns == 20) {
+                $population = $this->helper->create_first_population($population_number, $single_values, $acceptable_genes);
+            }
 
             $population = $this->helper->roullete_selection($population, $population_number, $sum_chances, $acceptable_genes);
 
             $population = $this->helper->get_population_fitness($population, $acceptable_genes);
 
             $best_individual = $this->helper->best_individual($population);
-            //$acceptable_genes_number = $best_individual['fitness']['acceptable_genes'];
-            $collisions_number = $best_individual['fitness']['collisions'];
+            $collisions_number = $this->helper->check_collisions_per_individual($best_individual);
+
             $total_fitness_after = $best_individual['fitness']['total_fitness'];
 
             $turns++;
         }
 
-        $this->view_data['solution'] = $best_individual;
-        $this->load->template('dptmanager/assignment_view', $this->view_data);
-        
-        //var_dump($best_individual);
+        $solution = $this->declarations->show_results($best_individual);
 
-        echo "acceptable: " . $this->helper->check_acceptable_genes_per_individual($best_individual, $acceptable_genes);
-        echo "<br/>";
-        echo "collisions: " . $collisions_number;
+        $general_results['acceptable_genes'] = $this->helper->check_acceptable_genes_per_individual($best_individual, $acceptable_genes);
+        $general_results['collisions'] = $collisions_number;
+        $general_results['turns'] = $turns;
+        $general_results['total_fitness'] = $total_fitness_after;
+
+        $this->view_data['solution'] = $solution;
+        $this->view_data['general_results'] = $general_results;
+        $this->load->template('dptmanager/assignment_view', $this->view_data);
     }
 
 }

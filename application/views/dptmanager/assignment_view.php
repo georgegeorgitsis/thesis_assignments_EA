@@ -8,55 +8,12 @@
     .results-tr td {
         border-bottom: 1px solid silver;
         margin: 10px 0px;
-        width: 33%;
+        width: 25%;
     }
     #population {
         width: 100%;
     }
 </style>
-
-<header class="navbar navbar-default navbar-static-top" role="banner">
-    <div class="container">
-        <div class="navbar-header">
-            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand">ΜΔΕ Dpt Manager</a>
-        </div>
-        <nav class="collapse navbar-collapse" role="navigation">
-            <ul class="nav navbar-nav">
-                <li>
-                    <a href="<?= base_url('dptmanager/student_management'); ?>">Manage Students</a>
-                </li>
-                <li>
-                    <a href="<?= base_url('dptmanager/teacher_management'); ?>">Manage Teachers</a>
-                </li>
-                <li><a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-                       aria-expanded="false" href="#">Courses <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="<?= base_url('dptmanager/assign_grades_to_students'); ?>">Grades to courses</a>
-                        </li>
-                        <li><a href="<?= base_url('dptmanager/course_management'); ?>">Courses</a></li>
-                    </ul>
-
-                </li>
-                <li>
-                    <a href="<?= base_url('dptmanager/department_settings'); ?>">Dpt Settings</a>
-                </li>
-                <li>
-                    <a href="<?= base_url('assignment/get_data'); ?>">Thesis Assignment</a>
-                </li>
-                <li>
-                    <a href="<?= base_url('login/logout'); ?>">Logout</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</header>
 
 <!-- Begin Body -->
 <div class="container">
@@ -83,31 +40,80 @@
         <?php endif; ?>
 
         <div class="col-md-12">
-            <h1>Thesis Assignment Report</h1>
-
-            <h3>Results:</h3>
             <table id="population">
                 <tr>
                 </tr>
+
+                <tr class="results-tr">
+                    <td>
+                        <h3>Φοιτητής</h3>
+                    </td>
+                    <td>
+                        <h3>Πτυχιακή</h3>           
+                    </td>
+                    <td>
+                        <h3>Προτίμηση</h3>
+                    </td>
+                    <td>
+                        <h3>Βαθμολογία κριτηρίων</h3>
+                    </td>
+                </tr>
+
                 <?php
-                $i = count($solution) - 1;
+                $i = count($solution);
 
                 for ($k = 0; $k < $i; $k++) {
                     ?>
                     <tr class="results-tr">
                         <td>
-                            <?php echo $solution[$k]['student_id']; ?>
+                            <?php echo $solution[$k]['student_id'] . " - " . $solution[$k]['student']['uacc_username']; ?>
                         </td>
                         <td>
-                            <?php echo $solution[$k]['thesis_id']; ?>
+                            <?php echo $solution[$k]['thesis_id'] . " - " . $solution[$k]['thesis']['title']; ?>
                         </td>
                         <td>
                             <?php echo $solution[$k]['priority']; ?>
+                        </td>
+                        <td>
+                            <?php echo $solution[$k]['assessment']; ?>
                         </td>
                     </tr>
                     <?php
                 }
                 ?>
+            </table>
+
+            <hr>
+
+            <table id="population">
+                <tr class="results-tr">
+                    <td>
+                        <h3>Acceptable</h3>
+                    </td>
+                    <td>
+                        <h3>Collisions</h3>
+                    </td>
+                    <td>
+                        <h3>Turns</h3>
+                    </td>
+                    <td>
+                        <h3>Total fitness</h3>
+                    </td>
+                </tr>
+                <tr class="results-tr">
+                    <td>
+                        <?php echo $general_results['acceptable_genes']; ?>
+                    </td>
+                    <td>
+                        <?php echo $general_results['collisions']; ?>
+                    </td>
+                    <td>
+                        <?php echo $general_results['turns']; ?>
+                    </td>
+                    <td>
+                        <?php echo $general_results['total_fitness']; ?>
+                    </td>
+                </tr>
             </table>
             <hr>
         </div>
