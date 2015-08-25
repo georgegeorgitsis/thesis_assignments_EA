@@ -81,7 +81,6 @@ class Assignment extends MY_Controller {
 
         $population = $this->helper->get_population_fitness($population, $acceptable_genes);
 
-        $acceptable_genes_number = 0;
         $collisions_number = 1;
         $turns = 0;
         $total_fitness_before = 10;
