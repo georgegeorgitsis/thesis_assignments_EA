@@ -123,7 +123,7 @@
                     <label for="population_number">Αριθμός πληθυσμού</label>
                 </div>
                 <div class="col-lg-6">
-                    <input type="text" name="population_number" id="population_number" required="required" value="1000">
+                    <input type="text" name="population_number" id="population_number" required="required" value="50">
                 </div>
             </div>
 

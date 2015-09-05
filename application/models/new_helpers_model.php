@@ -153,16 +153,20 @@ class new_helpers_model extends CI_Model {
         return $acceptable_genes;
     }
 
-    public function check_collisions_per_individual($individual = array()) {
-        $individual_cells_count = count($individual) - 1;
+    public function check_collisions_per_individual($individual) {
         $collisions_found = 0;
 
-        for ($i = 0; $i < $individual_cells_count; $i++) {
-            $thesis_id = $individual[$i]['thesis_id'];
+        $temp_array = $individual;
+        $temp_array = array_values($temp_array);
 
-            for ($j = $i; $j < $individual_cells_count; $j++) {
+        $genes_count = count($temp_array) - 1;
+
+        for ($i = 0; $i < $genes_count; $i++) {
+            $thesis_id = $temp_array[$i];
+
+            for ($j = $i; $j < $genes_count; $j++) {
                 if ($i != $j) {
-                    if ($individual[$j]['thesis_id'] == $thesis_id) {
+                    if ($temp_array[$j] == $thesis_id) {
                         $collisions_found++;
                     }
                 }
@@ -172,14 +176,20 @@ class new_helpers_model extends CI_Model {
         return $collisions_found;
     }
 
-    public function check_acceptable_genes_per_individual($individual = array(), $acceptable_genes) {
-        $individual_cells_count = count($individual) - 1;
-        $genes_count = count($acceptable_genes);
+    public function check_acceptable_genes_per_individual($individual, $acceptable_genes) {
         $acceptable_genes_count = 0;
 
-        for ($i = 0; $i < $individual_cells_count; $i++) {
-            if ($individual[$i]['assessment'] != 0) {
-                $acceptable_genes_count++;
+        $individual_cells_count = count($individual) - 1;
+        $genes_count = count($acceptable_genes);
+
+        foreach ($individual as $key => $val) {
+            if ($key == "fitness") {
+                break;
+            }
+            foreach ($acceptable_genes as $acceptable_gene) {
+                if ($acceptable_gene['student_id'] == $key && $acceptable_gene['thesis_id'] == $val) {
+                    $acceptable_genes_count++;
+                }
             }
         }
 
@@ -208,12 +218,16 @@ class new_helpers_model extends CI_Model {
         return $all_single_values;
     }
 
-    public function get_sum_assesment_per_individual($individual = array()) {
+    public function get_sum_assesment_per_individual($individual, $acceptable_genes) {
         $individual_cells_count = count($individual) - 1;
         $sum = 0;
 
-        for ($i = 0; $i < $individual_cells_count; $i++) {
-            $sum += $individual[$i]['assessment'];
+        foreach ($individual as $key => $gene) {
+            foreach ($acceptable_genes as $acceptable_gene) {
+                if ($acceptable_gene['student_id'] == $key && $acceptable_gene['thesis_id'] == $gene) {
+                    $sum += $acceptable_gene['assessment'];
+                }
+            }
         }
 
         return $sum;
@@ -229,64 +243,13 @@ class new_helpers_model extends CI_Model {
         return $single_chances;
     }
 
-    public function create_first_population($population_number, $single_values, $acceptable_genes) {
-        //1st individual
+    public function create_first_population($population_number, $single_values) {
         $population = array();
-        $i = 0;
 
-        foreach ($single_values['student_id'] as $each_student) {
-            foreach ($acceptable_genes as $gene) {
-                if ($each_student == $gene['student_id']) {
-                    if ($gene['priority'] == 1) {
-                        $population[0][$i]['student_id'] = $each_student;
-                        $population[0][$i]['thesis_id'] = $gene['thesis_id'];
-                        $population[0][$i]['priority'] = $gene['priority'];
-                        $population[0][$i]['assessment'] = $gene['assessment'];
-                        $i++;
-                    }
-                }
-            }
-        }
-        $temp_array = array();
-        $i = 0;
-        foreach ($acceptable_genes as $each_gene) {
-            $temp_array[$each_gene['student_id']][$i]['student_id'] = $each_gene['student_id'];
-            $temp_array[$each_gene['student_id']][$i]['thesis_id'] = $each_gene['thesis_id'];
-            $temp_array[$each_gene['student_id']][$i]['priority'] = $each_gene['priority'];
-            $temp_array[$each_gene['student_id']][$i]['assessment'] = $each_gene['assessment'];
-            $i++;
-        }
-
-
-        for ($i = 1; $i < $population_number; $i++) {
-            $j = 0;
+        for ($i = 0; $i < $population_number; $i++) {
             foreach ($single_values['student_id'] as $each_student) {
-                $random = rand(0, 1);
-                //if ($random == 0) {
-                $r = array_rand($temp_array[$each_student]);
-                $population[$i][$j] = $temp_array[$each_student][$r];
-                /*
-                  } else {
-                  $random_thesis_id_key = array_rand($single_values['thesis_id'], 1);
-                  $random_priority_id_key = array_rand($single_values['priority'], 1);
-
-                  $population[$i][$j]['student_id'] = $each_student;
-                  $population[$i][$j]['thesis_id'] = $single_values['thesis_id'][$random_thesis_id_key];
-                  $population[$i][$j]['priority'] = $single_values['priority'][$random_priority_id_key];
-
-                  //des an exei kala genes kai dose to assesment. allios dose 0
-                  for ($k = 0; $k < count($single_values['student_id']); $k++) {
-                  $population[$i][$j]['assessment'] = 0;
-                  if ($population[$i][$j]['student_id'] == $acceptable_genes[$k]['student_id'] && $population[$i][$j]['thesis_id'] == $acceptable_genes[$k]['thesis_id'] && $population[$i][$j]['priority'] == $acceptable_genes[$k]['priority']) {
-                  $population[$i][$j]['assessment'] = $acceptable_genes[$k]['assessment'];
-                  break;
-                  }
-                  }
-                  }
-                 * 
-                 */
-
-                $j++;
+                $r = array_rand($single_values['thesis_id']);
+                $population[$i][$each_student] = $single_values['thesis_id'][$r];
             }
         }
 
@@ -298,25 +261,23 @@ class new_helpers_model extends CI_Model {
         $population_count = count($population);
 
         for ($i = 0; $i < $population_count; $i++) {
-            //$population[$i]['fitness']['acceptable_genes'] = $this->check_acceptable_genes_per_individual($population[$i], $acceptable_genes);
-            //$population[$i]['fitness']['fs_acceptable_genes'] = $this->helper->feature_scaling(0, $students_count, $population[$i]['fitness']['acceptable_genes']) * 100;
+            $population[$i]['fitness'] = array();
+            $population[$i]['fitness']['acceptable_genes'] = $this->check_acceptable_genes_per_individual($population[$i], $acceptable_genes);
+            $population[$i]['fitness']['fs_acceptable_genes'] = $this->helper->feature_scaling(0, $students_count, $population[$i]['fitness']['acceptable_genes']);
 
-            $population[$i]['fitness']['collisions'] = $this->check_collisions_per_individual($population[$i]);
-            $population[$i]['fitness']['fs_collisions'] = $this->helper->feature_scaling(0, $students_count, $population[$i]['fitness']['collisions']);
-            $population[$i]['fitness']['sum_assesment'] = $this->get_sum_assesment_per_individual($population[$i]);
+            if ($population[$i]['fitness']['fs_acceptable_genes'] == 1) {
+                $population[$i]['fitness']['collisions'] = $this->check_collisions_per_individual($population[$i]);
+                $population[$i]['fitness']['fs_collisions'] = $this->helper->feature_scaling(0, $students_count, $population[$i]['fitness']['collisions'], true);
+            } else {
+                $population[$i]['fitness']['collisions'] = $students_count;
+                $population[$i]['fitness']['fs_collisions'] = 0;
+            }
 
-            /*
-              if ($population[$i]['fitness']['fs_acceptable_genes'] != 1) {
-              $population[$i]['fitness']['fs_collisions'] = $this->helper->feature_scaling(0, $students_count, $population[$i]['fitness']['collisions']) * 100;
-              } else {
-              $population[$i]['fitness']['fs_collisions'] = $this->helper->feature_scaling(0, $students_count, $population[$i]['fitness']['collisions']) * 100;
-              }
-              if ($population[$i]['fitness']['fs_collisions'] != 1) {
-              $population[$i]['fitness']['sum_assesment'] = $this->get_sum_assesment_per_individual($population[$i]);
-              } else {
-              $population[$i]['fitness']['sum_assesment'] = $this->get_sum_assesment_per_individual($population[$i]);
-              }
-             */
+            if ($population[$i]['fitness']['collisions'] == 0) {
+                $population[$i]['fitness']['sum_assesment'] = $this->get_sum_assesment_per_individual($population[$i], $acceptable_genes);
+            } else {
+                $population[$i]['fitness']['sum_assesment'] = 0;
+            }
         }
 
         $min_sum_assesment = $population[0]['fitness']['sum_assesment'];
@@ -334,20 +295,24 @@ class new_helpers_model extends CI_Model {
         }
 
         for ($i = 0; $i < $population_count; $i++) {
-            $population[$i]['fitness']['fs_sum_assesment'] = $this->helper->feature_scaling($min_sum_assesment, $max_sum_assesment, $population[$i]['fitness']['sum_assesment']);
+            if ($population[$i]['fitness']['collisions'] == 0) {
+                $population[$i]['fitness']['fs_sum_assesment'] = $this->helper->feature_scaling($min_sum_assesment, $max_sum_assesment, $population[$i]['fitness']['sum_assesment']);
+            } else {
+                $population[$i]['fitness']['fs_sum_assesment'] = 0;
+            }
 
-            /*
-              if ($min_sum_assesment == $max_sum_assesment) {
-              $population[$i]['fitness']['fs_sum_assesment'] = 0.5;
-              } else {
-              $population[$i]['fitness']['fs_sum_assesment'] = $this->helper->feature_scaling($min_sum_assesment, $max_sum_assesment, $population[$i]['fitness']['sum_assesment']);
-              }
-             * 
-             */
+            $population[$i]['fitness']['total_fitness'] = $population[$i]['fitness']['fs_acceptable_genes'] + $population[$i]['fitness']['fs_collisions'] + $population[$i]['fitness']['fs_sum_assesment'];
+        }
 
-            //$population[$i]['fitness']['total_fitness'] = $population[$i]['fitness']['fs_acceptable_genes'] + $population[$i]['fitness']['fs_collisions'] + $population[$i]['fitness']['fs_sum_assesment'];
-            $population[$i]['fitness']['total_fitness'] = $population[$i]['fitness']['fs_collisions'] + $population[$i]['fitness']['fs_sum_assesment'] * 2;
+        $sum_fitness = 0;
+        for ($i = 0; $i < $population_count; $i++) {
+            $sum_fitness += $population[$i]['fitness']['total_fitness'];
+        }
 
+        for ($i = 0; $i < $population_count; $i++) {
+            if ($sum_population_assesments == 0) {
+                $sum_population_assesments = 0.1;
+            }
             $population[$i]['fitness']['chances'] = (float) number_format($population[$i]['fitness']['total_fitness'] / $sum_population_assesments, 6) * 1000000;
         }
 
@@ -381,6 +346,9 @@ class new_helpers_model extends CI_Model {
                 $choosen_cell++;
             }
         }
+
+        var_dump($population_for_crossover);
+
         $new_population = $this->crossover($population_for_crossover, $acceptable_genes);
 
         return $new_population;
@@ -389,37 +357,28 @@ class new_helpers_model extends CI_Model {
     public function crossover($population, $acceptable_genes) {
         $population_count = count($population);
         $genes_count = count($population[0]) - 1;
+
         //mutation
         for ($m = 0; $m < 1000; $m++) {
             $mutation[$m] = $m;
         }
 
         for ($i = 0; $i < $population_count; $i++) {
-            $mutation_random = $mutation[array_rand($mutation)];
 
-            $given_thesis = array();
-
+            unset($population[$i]['fitness']);
 
             if ($i % 2 != 0) {
-                for ($j = 0; $j < count($population[$i]) - 1; $j++) {
+                for ($j = 0; $j < count($population[$i]); $j++) {
 
-                    if (in_array($population[$i][$j]['thesis_id'], $given_thesis)) {
-                        $good_child[$j] = $population[$i - 1][$j];
-                        $bad_child[$j] = $population[$i][$j];
-                    } else {
-                        foreach ($acceptable_genes as $gene) {
-                            if ($population[$i][$j]['student_id'] == $gene['student_id'] && $population[$i][$j] == $gene['thesis_id']) {
-                                $good_child[$j] = $population[$i][$j];
-                                $bad_child[$j] = $population[$i - 1][$j];
-                            } else {
-                                $good_child[$j] = $population[$i - 1][$j];
-                                $bad_child[$j] = $population[$i][$j];
-                            }
-                        }
+                    $rand = rand(0, 1);
+
+                    if ($rand == 0) {
+                        
                     }
 
+                    $mutation_random = $mutation[array_rand($mutation)];
+
                     if ($mutation_random == 0) {
-                        echo "mutation";
                         for ($g = 0; $g < count($acceptable_genes); $g++) {
                             $random_thesis[$g] = $acceptable_genes[$g]['thesis_id'];
 
@@ -431,9 +390,6 @@ class new_helpers_model extends CI_Model {
                             $bad_child[$j]['thesis_id'] = $temp_child['thesis_id'];
                         }
                     }
-
-                    array_push($given_thesis, $population[$i - 1][$j]['thesis_id']);
-                    array_push($given_thesis, $population[$i][$j]['thesis_id']);
                 }
 
                 $new_population[$i - 1] = $good_child;

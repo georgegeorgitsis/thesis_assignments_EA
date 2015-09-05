@@ -75,13 +75,14 @@ class Assignment extends MY_Controller {
         //fere se ena array ola ta values apo students, thesis, priority gia na ftiaksw random pramata
         $single_values = $this->helper->get_single_values_of_genes($acceptable_genes);
 
-        sort($single_values['student_id']);
-
         //ftiakse to 1o population me random genes. to 1o individual to exoume apo prin
-        $population = $this->helper->create_first_population($population_number, $single_values, $acceptable_genes);
+        $population = $this->helper->create_first_population($population_number, $single_values);
 
         $population = $this->helper->get_population_fitness($population, $acceptable_genes);
-
+        
+        var_dump($population);
+        die();
+        
         $collisions_number = 1;
         $turns = 0;
         $total_fitness = 0;
@@ -89,11 +90,6 @@ class Assignment extends MY_Controller {
         while ($collisions_number != 0 || $total_fitness <= 0) {
 
             $sum_chances = $this->helper->get_sum_single_chances($population);
-
-            if ($turns % 20 == 0) {
-                $population = $this->helper->create_first_population($population_number, $single_values, $acceptable_genes);
-                $population = $this->helper->get_population_fitness($population, $acceptable_genes);
-            }
 
             $population = $this->helper->roullete_selection($population, $population_number, $sum_chances, $acceptable_genes);
 
@@ -103,7 +99,6 @@ class Assignment extends MY_Controller {
             $collisions_number = $this->helper->check_collisions_per_individual($best_individual);
 
             $total_fitness = $best_individual['fitness']['total_fitness'];
-
 
             $turns++;
         }
