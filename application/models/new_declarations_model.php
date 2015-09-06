@@ -26,29 +26,44 @@ class new_declarations_model extends CI_Model {
         return $res;
     }
 
-    public function show_results($solution) {
-
-        $i = count($solution) - 1;
-
-        for ($k = 0; $k < $i; $k++) {
+    public function show_results($solution, $acceptable_genes) {
+        $i = 0;
+        foreach ($solution as $key => $val) {
+            if ($key == "fitness") {
+                break;
+            }
             $qry = $this->db->select('uacc_username')
                     ->from('user_accounts')
-                    ->where('uacc_id', $solution[$k]['student_id'])
+                    ->where('uacc_id', $key)
                     ->get();
 
             $qry1 = $this->db->select('title')
                     ->from('thesis')
-                    ->where('id', $solution[$k]['thesis_id'])
+                    ->where('id', $val)
                     ->get();
 
-            $res[$k]['student_id'] = $solution[$k]['student_id'];
-            $res[$k]['thesis_id'] = $solution[$k]['thesis_id'];
-            $res[$k]['student'] = $qry->row_array();
-            $res[$k]['thesis'] = $qry1->row_array();
-            $res[$k]['priority'] = $solution[$k]['priority'];
-            $res[$k]['assessment'] = $solution[$k]['assessment'];
-        }
+            $res[$i]['student_id'] = $key;
+            $res[$i]['thesis_id'] = $val;
+            $res[$i]['student'] = $qry->row_array();
+            $res[$i]['thesis'] = $qry1->row_array();
 
+            $found = false;
+            foreach ($acceptable_genes as $each_gene) {
+                if ($key == $each_gene['student_id'] && $val == $each_gene['thesis_id']) {
+                    $res[$i]['priority'] = $each_gene['priority'];
+                    $res[$i]['assessment'] = $each_gene['assessment'];
+
+                    $found = true;
+                }
+            }
+
+            if (!$found) {
+                $res[$i]['priority'] = "Not acceptable";
+                $res[$i]['assessment'] = "Not acceptable";
+            }
+
+            $i++;
+        }
 
         return $res;
     }

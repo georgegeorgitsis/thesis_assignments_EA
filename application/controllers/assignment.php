@@ -63,9 +63,7 @@ class Assignment extends MY_Controller {
 
         //fere tis varitites
         $varitites = $this->helper->get_varitites($this->input->post());
-
-        $terminate = floor($varitites['terminate'] / 200);
-
+        
         //fere sto array ton declarations, to assesment, mazi me ola ta fs
         $filled_declarations_with_fs = $this->helper->fill_declarations_with_fs($filled_declarations_before_fs, $all_values, $varitites);
 
@@ -79,36 +77,47 @@ class Assignment extends MY_Controller {
         $population = $this->helper->create_first_population($population_number, $single_values);
 
         $population = $this->helper->get_population_fitness($population, $acceptable_genes);
-        
-        var_dump($population);
-        die();
-        
-        $collisions_number = 1;
-        $turns = 0;
-        $total_fitness = 0;
 
-        while ($collisions_number != 0 || $total_fitness <= 0) {
+        $turns = 0;
+        $fitness_prev = 0;
+        $fitness_curr = 0;
+        $break_point = 0;
+
+        while ($break_point != 500) {
 
             $sum_chances = $this->helper->get_sum_single_chances($population);
 
-            $population = $this->helper->roullete_selection($population, $population_number, $sum_chances, $acceptable_genes);
+            $population = $this->helper->roullete_selection($population, $population_number, $sum_chances, $acceptable_genes, $all_values);
 
             $population = $this->helper->get_population_fitness($population, $acceptable_genes);
 
-            $best_individual = $this->helper->best_individual($population);
-            $collisions_number = $this->helper->check_collisions_per_individual($best_individual);
+            $best_individual = $this->helper->best_individual($population, $students_to_get_thesis_number);
 
-            $total_fitness = $best_individual['fitness']['total_fitness'];
+            $fitness_curr = $best_individual['fitness']['total_fitness'];
 
+            if (abs($fitness_prev - $fitness_curr) != 0) {
+                $break_point ++;
+            } else {
+                $break_point = 0;
+            }
+
+            if ($turns == 2000) {
+                echo "2000 turns";
+                break;
+            }
+
+            $fitness_prev = $fitness_curr;
             $turns++;
         }
 
-        $solution = $this->declarations->show_results($best_individual);
+
+        //var_dump($best_individual);
+        $solution = $this->declarations->show_results($best_individual, $acceptable_genes);
 
         $general_results['acceptable_genes'] = $this->helper->check_acceptable_genes_per_individual($best_individual, $acceptable_genes);
-        $general_results['collisions'] = $collisions_number;
+        $general_results['collisions'] = $best_individual['fitness']['collisions'];
+        $general_results['total_fitness'] = $best_individual['fitness']['total_fitness'];
         $general_results['turns'] = $turns;
-        $general_results['total_fitness'] = $total_fitness;
 
         $this->view_data['solution'] = $solution;
         $this->view_data['general_results'] = $general_results;

@@ -40,6 +40,9 @@
                     <a href="<?= base_url('dptmanager/department_settings'); ?>">Dpt Settings</a>
                 </li>
                 <li>
+                    <a href="<?= base_url('dptmanager/show_declarations');?>">Declarations</a>
+                </li>
+                <li>
                     <a href="<?= base_url('assignment/get_data'); ?>">Thesis Assignment</a>
                 </li>
                 <li>
