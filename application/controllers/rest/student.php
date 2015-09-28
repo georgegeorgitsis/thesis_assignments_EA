@@ -106,7 +106,6 @@ class student extends REST_Controller {
 
     public function delete_student_delete() {
         $api_key = $this->rest->key;
-        var_dump($this);
         if ($this->get('username') == "") {
             $this->response(array("Error" => "No username provided"), 406);
         } else {

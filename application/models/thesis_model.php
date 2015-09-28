@@ -41,23 +41,30 @@ class thesis_model extends CI_Model {
 
     public function save_thesis($thesis, $lessons, $api_key) {
 
-        $qry = $this->db->select('*')
-                ->from('department')
-                ->join('keys', 'keys.id=department.key', 'keys.key=' . $api_key)
+        $qry = $this->db->select('user_accounts.uacc_id')
+                ->from('user_accounts')
+                ->where('uacc_username', $thesis['teacher'])
                 ->get();
-
         $result = $qry->row_array();
 
-        $thesis['department_id'] = $result['id'];
+        $thesis['teacher_id'] = $result['uacc_id'];
+
+        unset($thesis['teacher']);
 
         $this->db->insert("thesis", $thesis);
         $thesis_id = $this->db->insert_id();
 
         foreach ($lessons as $each_lesson) {
-            $assigned_lessons['thesis_id'] = $thesis_id;
-            $assigned_lessons['course_id'] = $each_lesson;
+            $qry = $this->db->select('courses.id')
+                    ->from('courses')
+                    ->where('course_code', $each_lesson)
+                    ->get();
+            $result = $qry->row_array();
 
-            $this->db->insert("assigned_lessons_to_thesis", $assigned_lessons);
+            $assigned_lessons['thesis_id'] = $thesis_id;
+            $assigned_lessons['course_id'] = $result['id'];
+
+            $this->db->insert("assigned_courses_to_thesis", $assigned_lessons);
         }
 
         return TRUE;
