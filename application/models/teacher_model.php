@@ -13,64 +13,56 @@ class teacher_model extends CI_Model {
         parent::__construct();
     }
 
-    public function save_teacher($teacher, $api_key) {
-        $qry = $this->db->select('*')
-                ->from('department')
-                ->join('keys', 'keys.id=department.key', 'keys.key=' . $api_key)
+    public function get_teacher($username, $api_key) {
+        $qry = $this->db->select('user_accounts.uacc_username as username, user_accounts.uacc_email as email')
+                ->from('user_accounts')
+                ->where('uacc_username', $username)
+                ->join('departments', 'departments.id=user_accounts.department_id')
+                ->join('keys', 'keys.id=departments.key')
+                ->where('keys.key', $api_key)
                 ->get();
 
         $result = $qry->row_array();
 
-        $teacher['department'] = $result['id'];
-
-        $this->db->insert("teacher", $teacher);
-        return TRUE;
-    }
-
-    public function get_single_teacher($am, $api_key) {
-        $qry = $this->db->select('teacher.name, teacher.surname, teacher.am')
-                ->from('teacher')
-                ->where('am', $am)
-                ->join('department', 'department.id=teacher.department')
-                ->join('keys', 'keys.id=department.key', 'keys.key=' . $api_key)
-                ->get();
-
-        $result = $qry->row_array();
-
-        return $result;
+        if (!empty($result)) {
+            return $result;
+        } else {
+            return -1;
+        }
     }
 
     public function get_teachers($api_key) {
-        $qry = $this->db->select('teacher.name, teacher.surname, teacher.am')
-                ->from('teacher')
-                ->join('department', 'department.id=teacher.department')
-                ->join('keys', 'keys.id=department.key', 'keys.key=' . $api_key)
+        $qry = $this->db->select('user_accounts.uacc_username as username, user_accounts.uacc_email as email, departments.name')
+                ->from('user_accounts')
+                ->join('departments', 'departments.id=user_accounts.department_id')
+                ->join('keys', 'departments.key=keys.id')
+                ->where('keys.key', $api_key)
+                ->where('user_accounts.uacc_group_fk', 2)
                 ->get();
 
         $result = $qry->result_array();
-        $i = 0;
-        foreach ($result as $each_row) {
-            $res[$i]['name'] = $each_row['name'];
-            $res[$i]['surname'] = $each_row['surname'];
-            $res[$i]['am'] = $each_row['am'];
-            $i++;
+
+        if (!empty($result)) {
+            return $result;
+        } else {
+            return -1;
         }
-        return $res;
     }
-    
-    public function save_direct_assignment($data, $api_key) {
-        $qry = $this->db->select('*')
-                ->from('department')
-                ->join('keys', 'keys.id=department.key', 'keys.key=' . $api_key)
+
+    public function save_teacher($teacher_data) {
+        $qry = $this->db->select('departments.id')
+                ->from('departments')
+                ->join('keys', 'keys.id=departments.key', 'keys.key=' . $teacher_data['api_key'])
                 ->get();
 
         $result = $qry->row_array();
-        
-        $assignment['thesis'] = $data['thesis'];
-        $assignment['student'] = $data['student'];
-        $assignment['department'] = $result['id'];
-        
-        $this->db->insert("assignments", $assignment);
-        return TRUE;
+        $department_id = $result['id'];
+
+        $user_data = array(
+            "department_id" => $department_id,
+        );
+
+        $this->flexi_auth->insert_user($teacher_data['email'], $teacher_data['username'], $teacher_data['password'], 2, TRUE);
     }
+
 }

@@ -31,7 +31,6 @@ class Teacher extends MY_Controller
     public function thesis_management()
     {
         $cur_date = date('Y-m-d');
-
         if ($cur_date < $this->settings['teacher_add_thesis_before'] || $cur_date > $this->settings['teacher_add_thesis_after']) {
             $this->session->set_flashdata('error', 'Date error');
             $this->load->template('message_view', $this->view_data);

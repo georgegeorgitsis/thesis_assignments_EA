@@ -13,35 +13,53 @@ class lesson_model extends CI_Model {
         parent::__construct();
     }
 
-    public function save_lesson($lesson, $api_key) {
-
-        $qry = $this->db->select('*')
-                ->from('department')
-                ->join('keys', 'keys.id=department.key', 'keys.key=' . $api_key)
+    public function get_lesson($code, $api_key) {
+        $qry = $this->db->select('courses.course_code as code, courses.name as name, departments.name as department')
+                ->from('courses')
+                ->where('courses.course_code', $code)
+                ->join('departments', 'departments.id=courses.department_id')
+                ->join('keys', 'keys.id=departments.key')
+                ->where('keys.key', $api_key)
                 ->get();
 
         $result = $qry->row_array();
 
-        $lesson['department'] = $result['id'];
-
-        $this->db->insert("lesson", $lesson);
-        return TRUE;
+        if (!empty($result)) {
+            return $result;
+        } else {
+            return -1;
+        }
     }
 
     public function get_lessons($api_key) {
-        $qry = $this->db->select('lesson.name')
-                ->from('lesson')
-                ->join('department', 'department.id=lesson.department')
-                ->join('keys', 'keys.id=department.key', 'keys.key=' . $api_key)
+        $qry = $this->db->select('courses.course_code as code, courses.name as name, departments.name as department')
+                ->from('courses')
+                ->join('departments', 'departments.id=courses.department_id')
+                ->join('keys', 'keys.id=departments.key', 'keys.key=' . $api_key)
                 ->get();
 
         $result = $qry->result_array();
-        $i = 0;
-        foreach ($result as $each_row) {
-            $res[$i]['name'] = $each_row['name'];
-            $i++;
+
+        if (!empty($result)) {
+            return $result;
+        } else {
+            return -1;
         }
-        return $res;
+    }
+
+    public function save_lesson($lesson, $api_key) {
+
+        $qry = $this->db->select('departments.id')
+                ->from('departments')
+                ->join('keys', 'keys.id=departments.key', 'keys.key=' . $api_key)
+                ->get();
+
+        $result = $qry->row_array();
+
+        $lesson['department_id'] = $result['id'];
+
+        $this->db->insert("courses", $lesson);
+        return TRUE;
     }
 
 }

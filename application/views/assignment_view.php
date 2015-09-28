@@ -7,24 +7,31 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand">ΜΔΕ Superadmin</a>
+            <a href="<?= base_url(); ?>" class="navbar-brand">DME Dpt Manager</a>
         </div>
         <nav class="collapse navbar-collapse" role="navigation">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="<?= base_url('superadmin/dpt_management');?>">Τμήματα</a>
+                    <a href="<?= base_url('dptmanager/student_management'); ?>">Manage Students</a>
                 </li>
                 <li>
-                    <a href="<?= base_url('superadmin/dpt_keys');?>">API keys</a>
+                    <a href="<?= base_url('dptmanager/teacher_management'); ?>">Manage Teachers</a>
+                </li>
+                <li><a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                       aria-expanded="false" href="#">Courses <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="<?= base_url('dptmanager/assign_grades_to_students'); ?>">Grades to courses</a>
+                        </li>
+                        <li><a href="<?= base_url('dptmanager/course_management'); ?>">Courses</a></li>
+                    </ul>
+
                 </li>
                 <li>
-                    <a href="<?= base_url('superadmin/dpt_administrator_management');?>">Χρήστες</a>
+                    <a href="<?= base_url('dptmanager/department_settings'); ?>">Dpt Settings</a>
                 </li>
                 <li>
-                    <a href="<?= base_url('superadmin/settings');?>">Ρυθμίσεις τμήματος</a>
-                </li>
-                <li>
-                    <a href="<?= base_url('login/logout');?>">Έξοδος</a>
+                    <a href="<?= base_url('assignment/get_data'); ?>">Thesis Assignment</a>
                 </li>
             </ul>
         </nav>
@@ -56,12 +63,26 @@
         <?php endif; ?>
 
         <div class="col-md-12">
-            <h2 id="sec0">Superadmin</h2>
+            <h1>Thesis Assignment Report</h1>
 
-            <?php if (!empty($output)): ?>
-                <?php echo $output->output; ?>
-            <?php endif; ?>
+            <h3>Results:</h3>
+            <?php // var_dump($this->input->post());?>
+            <table id="population">
+                <tr>
+                </tr>
 
-
+                <?php // var_dump($population);?>
+                <?php foreach ($population as $individual): ?>
+                    <tr>
+                        <?php foreach ($individual as $gene_key => $gene_value): ?>
+                            <td>
+                                <?php foreach ($gene_value as $key => $val): ?>
+                                    <?php echo $key . ' : ' . $val; ?>
+                                <?php endforeach; ?>
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
             <hr>
         </div>

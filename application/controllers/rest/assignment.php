@@ -14,6 +14,7 @@ class Assignment extends MY_Controller {
     var $user_data;
 
     public function __construct() {
+        ini_set('max_execution_time', 60);
         parent::__construct();
         $this->user_data = $this->flexi_auth->get_user_by_identity()->result();
     }
@@ -37,7 +38,8 @@ class Assignment extends MY_Controller {
     }
 
     public function get_declarations() {
-        $dpt_id = $this->user_data[0]->department_id;
+        $dpt_id = $this->get('department_id');
+
         $this->load->model('new_helpers_model', 'helper');
         $this->load->model('new_student_model', 'student');
         $this->load->model('new_thesis_model', 'thesis');
@@ -65,7 +67,14 @@ class Assignment extends MY_Controller {
         $students_to_get_thesis_number = count($all_values['student_id']);
 
         //fere tis varitites
-        $varitites = $this->helper->get_varitites($this->input->post());
+        $varitites = array(
+            'mo_sxolis' => intval($this->get['mo_sxolis']) / 100,
+            'mo_assigned_courses' => intval($this->get['mo_assigned_courses']) / 100,
+            'date_added' => intval($this->get['date_added']) / 100,
+            'bathmos_proodou' => intval($this->get['bathmos_proodou']) / 100,
+            'priority' => intval($this->get['priority']) / 100,
+            'terminate' => intval($this->get['mo_sxolis']) + intval($this->get['mo_assigned_courses']) + intval($this->get['date_added']) + intval($this->get['bathmos_proodou']) + intval($this->get['priority'])
+        );
 
         //fere sto array ton declarations, to assesment, mazi me ola ta fs
         $filled_declarations_with_fs = $this->helper->fill_declarations_with_fs($filled_declarations_before_fs, $all_values, $varitites);
@@ -150,18 +159,8 @@ class Assignment extends MY_Controller {
 
         $this->view_data['solution'] = $solution;
         $this->view_data['general_results'] = $general_results;
-        $this->load->template('dptmanager/assignment_view', $this->view_data);
-    }
 
-    public function save_to_database()
-    {
-        $dadad = $this->input->post();
-
-        foreach ($dadad['arr'] as $data_to_besaved){
-            $this->db->where('student_id', $data_to_besaved['student_id'])->delete('assignments');
-            $data_to_besaved['date_created'] = date('Y-m-d H:i:s');
-            $this->db->insert('assignments',$data_to_besaved);
-        }
+        $this->response($this->view_data, 200);
     }
 
 }

@@ -76,9 +76,10 @@ class Dptmanager extends MY_Controller {
         $crud->fields('course_id', 'student_id', 'grade');
         $crud->unset_columns('department_id', 'id');
 
-        $crud->set_relation('student_id', 'user_accounts', 'uacc_email', array('department_id' => $this->user_data[0]->department_id));
+        $crud->set_relation('student_id', 'user_accounts', 'uacc_email', array('department_id' => $this->user_data[0]->department_id, 'uacc_group_fk' => 3));
         $crud->set_relation('course_id', 'courses', 'name', array('department_id' => $this->user_data[0]->department_id));
         $crud->fields('student_id', 'course_id', 'grade');
+
         $crud->where('grades.department_id', $this->user_data[0]->department_id); //get only his department data
         $crud->callback_insert(array($this, 'custom_grade_to_student_insert_callback'));
 
@@ -121,7 +122,7 @@ class Dptmanager extends MY_Controller {
     }
 
     public function show_declarations() {
-        $qry = $this->db->select('ua.uacc_username as student, t.title as thesis, d.priority')
+        $qry = $this->db->select('ua.uacc_id as student_id, ua.uacc_username as student,t.id as thesis_id, t.title as thesis, d.priority')
                 ->from('declarations d, user_accounts ua, thesis t')
                 ->where('ua.uacc_id = d.student_id')
                 ->where('t.id = d.thesis_id')

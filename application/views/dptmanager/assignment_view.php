@@ -2,16 +2,23 @@
     .form-group {
         overflow: hidden;
     }
+
     .results-tr {
         width: 100%;
     }
+
     .results-tr td {
         border-bottom: 1px solid silver;
         margin: 10px 0px;
         width: 25%;
     }
+
     #population {
         width: 100%;
+    }
+
+    h3 {
+        font-size: 16px;
     }
 </style>
 
@@ -49,7 +56,7 @@
                         <h3>Φοιτητής</h3>
                     </td>
                     <td>
-                        <h3>Πτυχιακή</h3>           
+                        <h3>ΜΔΕ</h3>
                     </td>
                     <td>
                         <h3>Προτίμηση</h3>
@@ -63,6 +70,9 @@
                 $i = count($solution);
 
                 for ($k = 0; $k < $i; $k++) {
+                    $array_to_be_saved[$k]['thesis_id'] = $solution[$k]['thesis_id'];
+                    $array_to_be_saved[$k]['student_id'] = $solution[$k]['student_id'];
+
                     ?>
                     <tr class="results-tr">
                         <td>
@@ -80,6 +90,7 @@
                     </tr>
                     <?php
                 }
+                $json_en = json_encode($array_to_be_saved);
                 ?>
             </table>
 
@@ -88,16 +99,22 @@
             <table id="population">
                 <tr class="results-tr">
                     <td>
-                        <h3>Acceptable</h3>
+                        <h3>Αποδεκτά</h3>
                     </td>
                     <td>
-                        <h3>Collisions</h3>
+                        <h3>Συγκρούσεις</h3>
                     </td>
                     <td>
-                        <h3>Turns</h3>
+                        <h3>1ες επιλογές</h3>
                     </td>
                     <td>
-                        <h3>Total fitness</h3>
+                        <h3>Γενιές</h3>
+                    </td>
+                    <td>
+                        <h3>Ποιότητα</h3>
+                    </td>
+                    <td>
+                        <h3>Χρ. εκτέλεσης</h3>
                     </td>
                 </tr>
                 <tr class="results-tr">
@@ -108,12 +125,33 @@
                         <?php echo $general_results['collisions']; ?>
                     </td>
                     <td>
+                        <?php echo $general_results['first_choises']; ?>
+                    </td>
+                    <td>
                         <?php echo $general_results['turns']; ?>
                     </td>
                     <td>
                         <?php echo $general_results['total_fitness']; ?>
                     </td>
+                    <td>
+                        <?php echo $general_results['execution_time']; ?>
+                    </td>
                 </tr>
             </table>
             <hr>
+            <input type="button" id="save_btn" value="Save to database"/>
         </div>
+
+        <script>
+            $('#save_btn').click(function () {
+                $.ajax({
+                    url: "<?= base_url('assignment/save_to_database');?>",
+                    dataType: "json",
+                    method: "post",
+                    data: { arr : <?= $json_en; ?>}
+
+                }).done(function () {
+                    $(this).addClass("done");
+                });
+            });
+        </script>

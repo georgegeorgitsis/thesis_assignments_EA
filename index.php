@@ -18,6 +18,9 @@
  * NOTE: If you change these, also change the error_reporting() code below
  *
  */
+
+ini_set('max_execution_time', 5000);
+
 define('ENVIRONMENT', 'development');
 /*
  * ---------------------------------------------------------------

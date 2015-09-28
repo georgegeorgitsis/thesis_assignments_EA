@@ -17,36 +17,36 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand">ΜΔΕ Dpt Manager</a>
+            <a class="navbar-brand">Διαχειριστής</a>
         </div>
         <nav class="collapse navbar-collapse" role="navigation">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="<?= base_url('dptmanager/student_management'); ?>">Manage Students</a>
+                    <a href="<?= base_url('dptmanager/student_management'); ?>">Φοιτητές</a>
                 </li>
                 <li>
-                    <a href="<?= base_url('dptmanager/teacher_management'); ?>">Manage Teachers</a>
+                    <a href="<?= base_url('dptmanager/teacher_management'); ?>">Καθηγητές</a>
                 </li>
-                <li><a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" href="#">Courses <span class="caret"></span></a>
+                <li><a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" href="#">Μαθήματα <span class="caret"></span></a>
                     <ul class="dropdown-menu">
+                        <li><a href="<?= base_url('dptmanager/course_management'); ?>">Μαθήματα</a></li>
                         <li>
-                            <a href="<?= base_url('dptmanager/assign_grades_to_students'); ?>">Grades to courses</a>
+                            <a href="<?= base_url('dptmanager/assign_grades_to_students'); ?>">Βαθμοί</a>
                         </li>
-                        <li><a href="<?= base_url('dptmanager/course_management'); ?>">Courses</a></li>
                     </ul>
 
                 </li>
                 <li>
-                    <a href="<?= base_url('dptmanager/department_settings'); ?>">Dpt Settings</a>
+                    <a href="<?= base_url('dptmanager/department_settings'); ?>">Ρυθμίσεις</a>
                 </li>
                 <li>
-                    <a href="<?= base_url('dptmanager/show_declarations');?>">Declarations</a>
+                    <a href="<?= base_url('dptmanager/show_declarations'); ?>">Δηλώσεις</a>
                 </li>
                 <li>
-                    <a href="<?= base_url('assignment/get_data'); ?>">Thesis Assignment</a>
+                    <a href="<?= base_url('assignment/get_data'); ?>">Αναθέσεις</a>
                 </li>
                 <li>
-                    <a href="<?= base_url('login/logout');?>">Logout</a>
+                    <a href="<?= base_url('login/logout'); ?>">Έξοδος</a>
                 </li>
             </ul>
         </nav>
@@ -126,7 +126,7 @@
                     <label for="population_number">Αριθμός πληθυσμού</label>
                 </div>
                 <div class="col-lg-6">
-                    <input type="text" name="population_number" id="population_number" required="required" value="50">
+                    <input type="text" name="population_number" id="population_number" required="required" value="150">
                 </div>
             </div>
 
