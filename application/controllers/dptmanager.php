@@ -137,6 +137,10 @@ class Dptmanager extends MY_Controller {
         $this->load->template('dptmanager/declarations_view', $this->view_data);
     }
 
+    public function save_assignments() {
+        
+    }
+    
 }
 
 ?>

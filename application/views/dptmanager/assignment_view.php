@@ -139,7 +139,6 @@
                 </tr>
             </table>
             <hr>
-            <input type="button" id="save_btn" value="Save to database"/>
         </div>
 
         <script>

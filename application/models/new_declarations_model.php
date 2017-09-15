@@ -26,6 +26,19 @@ class new_declarations_model extends CI_Model {
         return $res;
     }
 
+    public function rest_get_all_declarations($dpt_id) {
+        $qry = $this->db->select('user_accounts.uacc_username,thesis.title,declarations.priority')
+                ->from('declarations')
+                ->join('user_accounts', 'user_accounts.uacc_id=declarations.student_id')
+                ->join('thesis', 'thesis.id=declarations.thesis_id')
+                ->where('user_accounts.department_id', $dpt_id)
+                ->get();
+
+        $res = $qry->result_array();
+
+        return $res;
+    }
+
     public function show_results($solution, $acceptable_genes) {
         $i = 0;
         foreach ($solution as $key => $val) {

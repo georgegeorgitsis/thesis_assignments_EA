@@ -87,7 +87,7 @@ class Assignment extends MY_Controller {
         $fitness_curr = 0;
         $break_point = 0;
 
-        while ($break_point != 500) {
+        while ($break_point != 1000) {
 
             $sum_chances = $this->helper->get_sum_single_chances($population);
 
@@ -110,15 +110,12 @@ class Assignment extends MY_Controller {
                 $break_point = 0;
             }
 
-            if ($best_individual['fitness']['collisions'] == 0 && $best_individual['fitness']['acceptable_genes'] == $students_to_get_thesis_number) {
-                //echo "found";
-                //break;
+            if ($turns % 1200 == 0) {
+                $population = $this->helper->create_first_population($population_number, $single_values, $acceptable_genes);
+
+                $population = $this->helper->get_population_fitness($population, $acceptable_genes);
             }
-            
-            if($turns == 500) {
-                //break;
-            }
-            
+
             $fitness_prev = $fitness_curr;
             $turns++;
         }
@@ -153,14 +150,13 @@ class Assignment extends MY_Controller {
         $this->load->template('dptmanager/assignment_view', $this->view_data);
     }
 
-    public function save_to_database()
-    {
+    public function save_to_database() {
         $dadad = $this->input->post();
 
-        foreach ($dadad['arr'] as $data_to_besaved){
+        foreach ($dadad['arr'] as $data_to_besaved) {
             $this->db->where('student_id', $data_to_besaved['student_id'])->delete('assignments');
             $data_to_besaved['date_created'] = date('Y-m-d H:i:s');
-            $this->db->insert('assignments',$data_to_besaved);
+            $this->db->insert('assignments', $data_to_besaved);
         }
     }
 

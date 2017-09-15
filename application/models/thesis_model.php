@@ -39,6 +39,18 @@ class thesis_model extends CI_Model {
         return $result;
     }
 
+    public function get_assigned_courses_to_thesis($thesis_title) {
+        $qry = $this->db->select('courses.name, courses.course_code')
+                ->from('courses')
+                ->join('assigned_courses_to_thesis', 'assigned_courses_to_thesis.course_id = courses.id')
+                ->join('thesis', 'thesis.id=assigned_courses_to_thesis.thesis_id')
+                ->where('thesis.title', $thesis_title)
+                ->get();
+        $result = $qry->result_array();
+
+        return $result;
+    }
+
     public function save_thesis($thesis, $lessons, $api_key) {
 
         $qry = $this->db->select('user_accounts.uacc_id')
@@ -68,6 +80,42 @@ class thesis_model extends CI_Model {
         }
 
         return TRUE;
+    }
+
+    public function get_thesis_for_student($department_id) {
+        $qry = $this->db->select('*')
+                ->from('thesis')
+                ->join('user_accounts', 'user_accounts.uacc_id = thesis.teacher_id')
+                ->where('user_accounts.department_id =' . $department_id)
+                ->order_by('thesis.title')
+                ->get();
+        $result = $qry->result_array();
+        return $result;
+    }
+
+    public function get_assigned_courses($department_id) {
+        $qry = $this->db->select('*')
+                ->from('assigned_courses_to_thesis as ac, courses as c')
+                ->where('ac.course_id = c.id')
+                ->get();
+        $result = $qry->result_array();
+        return $result;
+    }
+
+    public function edit_thesis($thesis) {
+
+        $thesis_title = $thesis['title'];
+        unset($thesis['title']);
+        
+        $this->db->where('thesis.title', $thesis_title);
+        $this->db->update('thesis', $thesis);
+
+        return true;
+    }
+    
+    public function delete_thesis($thesis_title) {
+        $this->db->delete('thesis', array('title' => $thesis_title));
+        return true;
     }
 
 }

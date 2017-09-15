@@ -8,28 +8,25 @@
  *   Date : 8/1/15
  *   Created by: PhpStorm
  */
-class Student extends MY_Controller
-{
+class Student extends MY_Controller {
+
     var $view_data;
     var $user_data;
     var $settings;
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         $this->user_data = $this->flexi_auth->get_user_by_identity()->result();
         $this->load->model('settings_model');
+        $this->load->model('thesis_model');
         $this->settings = $this->settings_model->get_settings($this->user_data[0]->department_id);
-
     }
 
-    public function index()
-    {
+    public function index() {
         redirect('student/thesis_declaration');
     }
 
-    public function thesis_declaration()
-    {
+    public function thesis_declaration() {
         /*
          * Θα τραβάει από τα priority του department settings το πόσα declaration μπορεί να κάνει
          * Αν έβαλε ο dpt manage priority 5, ο student θα βάζει τα thesis με σειρά προτίμησης 1-5
@@ -59,8 +56,7 @@ class Student extends MY_Controller
         }
     }
 
-    public function custom_student_insert_decl_callback($post_array)
-    {
+    public function custom_student_insert_decl_callback($post_array) {
         if ($post_array['priority'] > $this->settings['student_max_declarations']) {
             return false;
         }
@@ -68,13 +64,12 @@ class Student extends MY_Controller
             return false;
         }
 
-        $qry = $this->db->select('priority,thesis_id')->from('declarations')->where('student_id',
-            $this->user_data[0]->uacc_id)->get();
+        $qry = $this->db->select('priority,thesis_id')->from('declarations')->where('student_id', $this->user_data[0]->uacc_id)->get();
         $res = $qry->result_array();
-        foreach ($res as $whatevah){
-           if ($whatevah['priority'] == $post_array['priority'] || $whatevah['thesis_id'] == $post_array['thesis_id']){
-               return false;
-           }
+        foreach ($res as $whatevah) {
+            if ($whatevah['priority'] == $post_array['priority'] || $whatevah['thesis_id'] == $post_array['thesis_id']) {
+                return false;
+            }
         }
 
         $post_array['student_id'] = $this->user_data[0]->uacc_id;
@@ -82,6 +77,15 @@ class Student extends MY_Controller
 
         return $this->db->insert('declarations', $post_array);
     }
+
+    public function display_thesis() {
+        $department_id = $this->user_data[0]->department_id;
+
+        $this->view_data['output'] = $this->thesis_model->get_thesis_for_student($department_id);
+        $this->view_data['assigned_courses'] = $this->thesis_model->get_assigned_courses($department_id);
+        $this->load->template('student/student_thesis_view', $this->view_data);
+    }
+
 }
 
 ?>

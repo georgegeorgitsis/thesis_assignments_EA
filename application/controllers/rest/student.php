@@ -57,8 +57,6 @@ class student extends REST_Controller {
         $student_data['uacc_username'] = $this->put('username');
         $student_data['bathmos_proodou'] = $this->put('bathmos_proodou');
 
-        var_dump($student_data);
-
         foreach ($student_data as $data) {
             if ($data == "") {
                 $this->response(array("Error" => "Missing arguments"), 404);
@@ -70,7 +68,6 @@ class student extends REST_Controller {
         } else {
             $this->response(array("Error" => "Student Couldn't saved"), 404);
         }
-        var_dump($student_data);
     }
 
     public function add_student_grade_post() {

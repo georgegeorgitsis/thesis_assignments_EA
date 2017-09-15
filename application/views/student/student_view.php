@@ -12,12 +12,15 @@
         <nav class="collapse navbar-collapse" role="navigation">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="<?= base_url('student/thesis_declaration');?>">Declare Thesis</a>
+                    <a href="<?= base_url('student/display_thesis'); ?>">ΜΔΕ</a>
                 </li>
                 <li>
-                    <a href="<?= base_url('login/logout');?>">Logout</a>
+                    <a href="<?= base_url('student/thesis_declaration'); ?>">Δήλωση ΜΔΕ</a>
                 </li>
-                
+                <li>
+                    <a href="<?= base_url('login/logout'); ?>">Έξοδος</a>
+                </li>
+
             </ul>
         </nav>
     </div>
@@ -53,7 +56,6 @@
             <?php if (!empty($output)): ?>
                 <?php echo $output->output; ?>
             <?php endif; ?>
-
 
             <hr>
         </div>
